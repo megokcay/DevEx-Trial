@@ -1,6 +1,6 @@
 <template>
     <div>
-        <DxDataGrid :data-source="this.dataSource" :allow-column-reordering="true" :row-alternation-enabled="true"
+        <!-- <DxDataGrid :data-source="dataSource" :allow-column-reordering="true" :row-alternation-enabled="true"
             :show-borders="true">
             <DxHeaderFilter :visible="true" />
             <DxColumnChooser :enabled="true" mode="select" />
@@ -12,13 +12,13 @@
             <DxColumn data-field="protein" />
             <DxColumn data-field="iron" />
             <DxPaging :page-size="10" />
-        </DxDataGrid>
+        </DxDataGrid> -->
         <div class="popOutElement">
-            <DxDataGrid class="popOutGrid" :data-source="this.dataSource" :allow-column-reordering="true"
-                :row-alternation-enabled="true" :show-borders="true" ref="popOutGrid">
+            <DxDataGrid class="popOutGrid" :data-source="dataSource" :allow-column-reordering="true"
+                :row-alternation-enabled="true" :show-borders="true" ref="popOutGrid" allow-column-resizing="true">
                 <DxHeaderFilter :visible="true" />
                 <DxColumnChooser :enabled="true" mode="select" />
-                <DxColumn data-field="name" />
+                <DxColumn data-field="name"  />
                 <DxColumn data-field="calories" />
                 <DxColumn data-field="Discount" />
                 <DxColumn data-field="fat" />
@@ -32,7 +32,7 @@
 
     </div>
 </template>
-<script lang="js">
+<script lang="ts">
 
 import {
     DxDataGrid,
@@ -69,64 +69,64 @@ export default {
     },
     methods: {
         popOutClicked() {
-            const self = this;
-            const mainWindow = window;
-            const newWindow = window.open("", "", "height=700,width=1000");
+            const self = this as any;
+            const mainWindow = window as unknown as Window & {childWindow:Window};
+            const newWindow = window.open("", "", "height=700,width=1000") as Window & {ranOnce:boolean} | null;
+            if (!newWindow) { alert("please disable popup blocker"); return; }
+
             mainWindow.childWindow = newWindow;
             self.childWindows.push(newWindow);
-            if (newWindow) {
-                newWindow.onload = () => {
-                    if (newWindow) {
-                        if (newWindow.ranOnce) {
-                            return;
-                        } else {
-                            newWindow.ranOnce = true;
-                        }
-
-                        const popoutOuterElement = document.getElementsByClassName("popOutGrid")[0];
-                        const div = document.createElement("DIV");
-                        newWindow.document.write(`<!DOCTYPE html><html><head><title>popout</title></head><body></body></html>`);
-                        newWindow.document.body.append(div);
-                        newWindow.document.close();
-                        div.style.width = "100%";
-                        div.style.height = "100%";
-                        div.style.overflow = "scroll";
-                        div.style.display = "grid";
-                        div.append(popoutOuterElement);
-
-                        const currentPageSChildren = document.head.children;
-                        for (let i = 0; i < currentPageSChildren.length; i++) {
-                            let child = currentPageSChildren[i];
-                            if (child.tagName == "LINK") {
-                                let AChild = child;
-                                const cssLink = newWindow.document.createElement("link");
-                                cssLink.rel = "stylesheet";
-                                cssLink.type = "text/css";
-                                cssLink.href = AChild.href;
-                                newWindow.document.head.appendChild(cssLink);
-                            } else if (child.tagName == "STYLE") {
-                                const style = newWindow.document.createElement("style");
-                                style.type = "text/css";
-                                style.innerHTML = child.innerHTML;
-                                newWindow.document.head.appendChild(style);
-                            }
-                        }
-                        self.overrideAppendChild();
-                        newWindow.onbeforeunload = function () {
-                            const popinDiv = mainWindow.document.getElementsByClassName("popOutElement")[0];
-                            popinDiv.appendChild(newWindow.document.getElementsByClassName("popOutGrid")[0]);
-                            self.childWindows = [];
-                        };
+            newWindow.onload = () => {
+                if (newWindow) {
+                    if (newWindow.ranOnce) {
+                        return;
+                    } else {
+                        newWindow.ranOnce = true;
                     }
 
-                };
-                if (newWindow.document && newWindow.document.readyState == "complete" /* ah chrome ah */) {
-                    newWindow.onload();
+                    const popoutOuterElement = document.getElementsByClassName("popOutGrid")[0];
+                    const div = document.createElement("DIV");
+                    newWindow.document.write(`<!DOCTYPE html><html><head><title>popout</title></head><body></body></html>`);
+                    newWindow.document.body.append(div);
+                    newWindow.document.close();
+                    div.style.width = "100%";
+                    div.style.height = "100%";
+                    div.style.overflow = "scroll";
+                    div.style.display = "grid";
+                    div.append(popoutOuterElement);
+
+                    const currentPageSChildren = document.head.children;
+                    for (let i = 0; i < currentPageSChildren.length; i++) {
+                        let child = currentPageSChildren[i];
+                        if (child.tagName == "LINK") {
+                            let AChild = child as HTMLLinkElement;
+                            const cssLink = newWindow.document.createElement("link");
+                            cssLink.rel = "stylesheet";
+                            cssLink.type = "text/css";
+                            cssLink.href = AChild.href;
+                            newWindow.document.head.appendChild(cssLink);
+                        } else if (child.tagName == "STYLE") {
+                            const style = newWindow.document.createElement("style");
+                            style.type = "text/css";
+                            style.innerHTML = child.innerHTML;
+                            newWindow.document.head.appendChild(style);
+                        }
+                    }
+                    self.overrideAppendChild();
+                    newWindow.onbeforeunload = function () {
+                        const popinDiv = mainWindow.document.getElementsByClassName("popOutElement")[0];
+                        popinDiv.appendChild(newWindow.document.getElementsByClassName("popOutGrid")[0]);
+                        self.childWindows = [];
+                    };
                 }
+
+            };
+            if (newWindow.document && newWindow.document.readyState == "complete" /* ah chrome ah */) {
+                (newWindow as any).onload();
             }
         },
         overrideAppendChild() {
-            const self = this;
+            const self = this as unknown as {childWindows: Array<Window>};
             const childWindows = self.childWindows;
             const currDocument = window.document;
             (function (origAppendChild) {
