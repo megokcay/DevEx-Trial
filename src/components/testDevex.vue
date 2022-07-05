@@ -32,7 +32,7 @@
 
     </div>
 </template>
-<script>
+<script lang="js">
 
 import {
     DxDataGrid,
@@ -82,15 +82,18 @@ export default {
                         } else {
                             newWindow.ranOnce = true;
                         }
+
                         const popoutOuterElement = document.getElementsByClassName("popOutGrid")[0];
                         const div = document.createElement("DIV");
-                        newWindow.document.write(`<html><head><title>popout</title></head><body></body></html>`);
+                        newWindow.document.write(`<!DOCTYPE html><html><head><title>popout</title></head><body></body></html>`);
                         newWindow.document.body.append(div);
+                        newWindow.document.close();
                         div.style.width = "100%";
                         div.style.height = "100%";
                         div.style.overflow = "scroll";
                         div.style.display = "grid";
                         div.append(popoutOuterElement);
+
                         const currentPageSChildren = document.head.children;
                         for (let i = 0; i < currentPageSChildren.length; i++) {
                             let child = currentPageSChildren[i];
