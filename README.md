@@ -2,7 +2,7 @@
 
 ## Problem
 
-We are trying to move Dom elements of a DevExtreme component to another window. Like a partial Pop-out functinality.
+We are trying to move Dom elements of a DevExtreme component to another window. Like a partial Pop-out functionality.
 
 We were able to move Dom elements, but dialogs (like column chooser) were appearing on the previous window. So we intercepted appendChild of body of the existing window, in order to move appended nodes to the new windows (window in focus) body. And was able to show dialogs in the new window.
 
