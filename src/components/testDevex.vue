@@ -87,8 +87,8 @@ export default {
                     const popoutOuterElement = document.getElementsByClassName("popOutGrid")[0];
                     const div = document.createElement("DIV");
                     newWindow.document.write(`<!DOCTYPE html><html><head><title>popout</title></head><body></body></html>`);
-                    newWindow.document.body.append(div);
                     newWindow.document.close();
+                    newWindow.document.body.append(div);
                     div.style.width = "100%";
                     div.style.height = "100%";
                     div.style.overflow = "scroll";
